@@ -21,11 +21,30 @@ var config = {
   clean: true,
   hash: true,
   sourceMap: false,
+  static:true,
   publicPath: '/static/',
   assetsPath: 'images',
   urlLoaderLimit: 10000,
   extractCSS: 'css/[name].[contenthash:7].css',
-  extends: ['vue2']
+  extends: ['vue2','saladcss'],
+  postcss: [
+    require('postcss-salad')({
+      browser: ['ie > 9', 'last 2 version'],
+      features: {
+        'bem': {
+          'shortcuts': {
+            'component': 'b',
+            'modifier': 'm',
+            'descendent': 'e'
+          },
+          'separators': {
+            'descendent': '__',
+            'modifier': '--'
+          }
+        }
+      }
+    })
+  ]
 }
 if (process.env.NODE_ENV === 'production') {
   config.template = [{
@@ -44,12 +63,12 @@ if (process.env.NODE_ENV === 'production') {
 cooking.set(config)
 
 cooking.add('resolve.alias', {
-  '~src': path.resolve(__dirname, './src'),
-  '~components': path.resolve(__dirname, './src/components'),
-  '~api': path.resolve(__dirname, './src/api'),
-  '~pages': path.resolve(__dirname, './src/pages'),
-  '~store': path.resolve(__dirname, './src/store'),
-  '~utils': path.resolve(__dirname, './src/utils'),
+  'src': path.resolve(__dirname, './src'),
+  'components': path.resolve(__dirname, './src/components'),
+  'api': path.resolve(__dirname, './src/api'),
+  'pages': path.resolve(__dirname, './src/pages'),
+  'store': path.resolve(__dirname, './src/store'),
+  'utils': path.resolve(__dirname, './src/utils'),
   vue: 'vue/dist/vue.js'
 })
 cooking.add('plugin.ProvidePlugin',
