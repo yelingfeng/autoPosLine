@@ -18,23 +18,23 @@
     </div>
 </template>
 <script>
-    export default{
-        data(){
-            return{
-                compItems:[]
-            }
-        },
-        mounted(){
-            let comps = [
-               {id:1 ,name:"文本"},
-               {id:2 ,name:"按钮"},
-               {id:3 ,name:"图片"}
-            ]
-            this.compItems = comps;
-        },
-        components:{
+export default{
+    data(){
+        return{
+            compItems:[]
         }
+    },
+    mounted(){
+        let comps = [
+           {id:1 ,name:"文本"},
+           {id:2 ,name:"按钮"},
+           {id:3 ,name:"图片"}
+        ]
+        this.compItems = comps;
+    },
+    components:{
     }
+}
 </script>
 <style>
 @component-namespace ylf {

@@ -2,25 +2,28 @@
     <div class="workspace">
         <Toolbar></Toolbar>
         <ComponentsBox></ComponentsBox>
+        <Screens></Screens>
     </div>
 </template>
-
 <script>
-    import Toolbar from "pages/toolbar"
-    import ComponentsBox from "pages/components"
-    export default{
-        name : "app",
-        data(){
-            return{
-            }
-        },
-        mounted(){
-            let w = $(window).width();
-        },
-        components:{
-            Toolbar,ComponentsBox
+import Toolbar from "pages/toolbar"
+import ComponentsBox from "pages/components"
+import Screens from "pages/Screens"
+export default{
+    name : "app",
+    data(){
+        return{
         }
+    },
+    mounted(){
+        let w = $(window).width();
+    },
+    components:{
+        Toolbar,
+        Screens,
+        ComponentsBox
     }
+}
 </script>
 <style>
 @reset-global pc;
