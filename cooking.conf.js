@@ -12,7 +12,7 @@ var config = {
     'jquery': 'jQuery'
   },
   devServer: {
-    port: 8100,
+    port: 8700,
     publicPath: '/',
     hostname: 'localhost',
   },
@@ -87,7 +87,10 @@ if (process.env.NODE_ENV === 'production') {
       return (module.resource && /\.js$/.test(module.resource) && module.resource.indexOf('node_modules') > 0)
     }
   }))
-  cooking.add('plugin.CommonsChunk2', new webpack.optimize.CommonsChunkPlugin({name: 'manifest', chunks: ['vendor']}))
+  cooking.add('plugin.CommonsChunk2', new webpack.optimize.CommonsChunkPlugin({
+    name: 'manifest',
+    chunks: ['vendor']
+  }))
 } else {
   cooking.add('plugin.CommonsChunk', new webpack.optimize.CommonsChunkPlugin({
     names: ["vendor"]

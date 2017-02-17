@@ -5,7 +5,7 @@
                 <div class="group ">
                     <div class="title">基本</div>
                 </div>
-                <div class="item" v-for="(item,index) in compItems">
+                <div class="item" v-for="(item,index) in compItems" @click="clickAction(item)">
                     <div class="component">
                         <span>{{item.name}}</span>
                     </div>
@@ -18,6 +18,7 @@
     </div>
 </template>
 <script>
+import _ from "lodash"
 export default{
     data(){
         return{
@@ -31,6 +32,21 @@ export default{
            {id:3 ,name:"图片"}
         ]
         this.compItems = comps;
+    },
+    methods:{
+        clickAction(it){
+            let width= _.random(10,300);
+            let height = _.random(20,300);
+            let x = _.random(10,200);
+            let y = _.random(10,200);
+            let config = {
+               type : it.id,
+               size : {
+                  width,height,x,y
+               }
+            }
+            this.$store.dispatch("global/addAction",config)
+        }
     },
     components:{
     }

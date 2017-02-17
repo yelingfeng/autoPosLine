@@ -2,18 +2,28 @@
     <div class="ylf-screens ps-container" style="right: 239px;left: 180px;"  ref="wrapper" >
         <div class="ylf-screens__container" ref="inner">
             <div class="screen" :style="screenObj">
-                <div class="canvas">
-
+                <div class="canvas" id="canvas-container">
+                    <div class="sgrid"></div>
+                    <div class="vertical_line left" style="left:100px;display:block;"></div>
+                    <div class="vertical_line top"></div>
+                    <div class="vertical_line right"></div>
+                    <div class="horizon_line left " ></div>
+                    <div class="horizon_line top" style="top:600px;display:block;"></div>
+                    <div class="horizon_line right"></div>
+                    <elementBox :options="comp" v-for="comp in getComps"></elementBox>
                 </div>
             </div>
         </div>
-        <!-- 缩略图 -->
+        <!-- 缩略图
         <div class="ylf-screens__minimap" ref="minimap">
             <div class="ylf-screens__minimap--indicator" ></div>
         </div>
+         -->
     </div>
 </template>
 <script>
+import elementBox from "components/element.js"
+import { mapGetters } from "vuex"
 export default{
     data(){
         return{
@@ -27,14 +37,17 @@ export default{
                 width: this.w +"px",
                 height: this.h + "px"
             }
-        }
+        },
+        ...mapGetters({
+            getComps:'global/getComponents'
+        })
     },
     mounted(){
         this.w = 800 ;
         this.h = 500 ;
         const inner = this.$refs.inner;
         const wrapper = this.$refs.wrapper;
-        const minimapObj = this.$refs.minimap;
+        const miniMap = this.$refs.minimap;
         this.myScroll = new IScroll(wrapper,{
               startX:-510,
               startY:-10,
@@ -47,32 +60,24 @@ export default{
               probeType: 3,                  // 探针的活跃度或者频率 3最高
               scrollX: true,                 // 开启横轴滚动
               interactiveScrollbars: true ,  // 滚动条能拖动
-              indicators: {
-                el:minimapObj,
-                interactive: true
-              }
+             //  indicators: {
+             //   el:miniMap,
+             //   interactive: true
+             // }
         });
-
-
-        this.$nextTick(()=>{
-            html2canvas(inner,{
-                width:250,
-                height:100
-            }).then(function(canvas) {
-                var ctx = canvas.getContext("2d")
-                console.log(ctx)
-                ctx.clearRect(0,0,canvas.width,canvas.height);
-                ctx.scale(0.125,0.05);//x和y方向的缩放比例
-                ctx.strokeRect(0, 0,250,100);
-                minimapObj.appendChild(canvas);
-            });
-        })
-
-
+    },
+    components:{
+        elementBox
     }
 }
 </script>
 <style>
+
+.btn{
+}
+.ylf {
+   background:url("../assets/images/ylf.png")
+}
 
 .ps-container{
   overflow: hidden !important;
@@ -121,6 +126,40 @@ export default{
                     position: relative;
                     z-index: -65535;
                 }
+
+                & .sgrid{
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAAXNSR0IArs4c6QAAAB9JREFUOBFj0LNwa2AYBaMhMBoCoyEwGgKjIUB5CAAAbb0BLe8mjoMAAAAASUVORK5CYII=");
+                    pointer-events: none
+                }
+
+                & .vertical_line {
+                    height: 100%;
+                    position: absolute;
+                    top: 0;
+                    left: 100px;
+                    width: 1px;
+                    border-left: 1px dashed #fe9d60;
+                    z-index: 9;
+                    display: none;
+                }
+
+                & .horizon_line {
+                    width: 110%;
+                    position: absolute;
+                    top: 100px;
+                    left: -5%;
+                    height: 1px;
+                    border-top: 1px dashed #fe9d60;
+                    z-index: 9;
+                    display: none;
+                }
+
+
             }
         }
 
@@ -132,7 +171,7 @@ export default{
             width: 250px;
             height: 100px;
             border: 2px solid #ccc;
-            background-color:transparent;
+            background-color:#fff;
             @m indicator {
                 position: absolute;
                 z-index: 1;
@@ -145,5 +184,102 @@ export default{
         }
 
     }
+
+
+    @b element{
+        position: absolute;
+        text-align: center;
+        padding: 0;
+        z-index: 15;
+    }
+    @b rb {
+        @e scale{
+            position: absolute * 0 0 *;
+            size: 20px;
+            background: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/Pg08IS0tIEdlbmVyYXRvcjogQWRvYmUgRmlyZXdvcmtzIENTNiwgRXhwb3J0IFNWRyBFeHRlbnNpb24gYnkgQWFyb24gQmVhbGwgKGh0dHA6Ly9maXJld29ya3MuYWJlYWxsLmNvbSkgLiBWZXJzaW9uOiAwLjYuMSAgLS0+DTwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+DTxzdmcgaWQ9IlVudGl0bGVkLVBhZ2UlMjAxIiB2aWV3Qm94PSIwIDAgNiA2IiBzdHlsZT0iYmFja2dyb3VuZC1jb2xvcjojZmZmZmZmMDAiIHZlcnNpb249IjEuMSINCXhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbDpzcGFjZT0icHJlc2VydmUiDQl4PSIwcHgiIHk9IjBweCIgd2lkdGg9IjZweCIgaGVpZ2h0PSI2cHgiDT4NCTxnIG9wYWNpdHk9IjAuMzAyIj4NCQk8cGF0aCBkPSJNIDYgNiBMIDAgNiBMIDAgNC4yIEwgNCA0LjIgTCA0LjIgNC4yIEwgNC4yIDAgTCA2IDAgTCA2IDYgTCA2IDYgWiIgZmlsbD0iIzAwMDAwMCIvPg0JPC9nPg08L3N2Zz4=') bottom right no-repeat;
+            padding: 0 3px 3px 0;
+            background-origin: content-box;
+            box-sizing: border-box;
+            cursor: se-resize;
+        }
+
+        &:before{
+             position: absolute;
+             top: -2px;
+             left: -2px;
+             display: block;
+             width: 100%;
+             height: 100%;
+             content: "";
+             border: 1px solid rgba(49,143,214,.60);
+             z-index: -1;
+       }
+
+       @e radius{
+          circle:5px #fff;
+          border: 1px solid #08a1ef;
+          position: absolute;
+       }
+
+       @m nw-resize{
+         cursor: nw-resize;
+         left: -4px;
+         top: -4px;
+       }
+
+       @m n-resize{
+         cursor: n-resize;
+         left: 50%;
+         margin-left: -4px;
+         margin-top: -4px;
+         top: 0;
+       }
+
+       @m ne-resize {
+         cursor: ne-resize;
+         margin-right: -4px;
+         margin-top: -4px;
+         right: 0;
+         top: 0;
+       }
+       @m w-resize {
+         cursor: w-resize;
+         left: 0;
+         margin-left: -4px;
+         margin-top: -3px;
+         top: 50%;
+       }
+       @m e-resize{
+         cursor: e-resize;
+         margin-right: -4px;
+         margin-top: -3px;
+         right: 0;
+         top: 50%;
+       }
+       @m sw-resize{
+         bottom: 0;
+         cursor: sw-resize;
+         left: 0;
+         margin-bottom: -4px;
+         margin-left: -4px;
+       }
+       @m s-resize{
+         bottom: 0;
+         cursor: s-resize;
+         left: 50%;
+         margin-bottom: -4px;
+         margin-left: -3px;
+       }
+       @m se-resize{
+         bottom: 0;
+         cursor: se-resize;
+         margin-bottom: -4px;
+         margin-right: -4px;
+         right: 0;
+       }
+    }
 }
+
+
+
 </style>

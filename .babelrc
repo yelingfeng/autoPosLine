@@ -4,6 +4,8 @@
     "stage-2"
   ],
   "plugins": [
+    "transform-decorators-legacy",
+    "transform-vue-jsx"
   ],
   "comments": false
 }

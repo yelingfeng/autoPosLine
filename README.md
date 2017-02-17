@@ -24,13 +24,22 @@
 
 ## TODO
 构建基础场景
-- [ ] 创建基础组件
 
 组件 | 描述
 ---|---
 containerComponent | 容器组件 提供基础布局 ，大小，可拖拽，出滚动条
 elementComponent | 元素组件 提供基础拖拽自适应
 
+
+## Development
+
+```javascript
+npm i cooking-cli -g
+
+npm install
+npm run dev
+
+```
 
 
 
