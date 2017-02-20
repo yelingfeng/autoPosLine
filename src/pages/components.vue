@@ -155,7 +155,7 @@ export default{
 }
 .ylf-compArea__containers.model .item{
     width: 50px;
-    height: 30px;
+    height: 50px;
     padding: 8px;
     margin-bottom: 10px;
     overflow: hidden;
