@@ -1,8 +1,9 @@
 <template>
-    <div class="ylf-compArea">
-        <div class="ylf-compArea__containers">
+    <div :class="['ylf-compArea',isModel ? 'model':'']">
+        <a class="ltoggle"  @click="leftToggle"><i :class="['fa', isModel ? 'fa-angle-right':'fa-angle-left']"></i></a>
+        <div :class="['ylf-compArea__containers',isModel ? 'model':'']">
             <div class="items">
-                <div class="group ">
+                <div class="group" v-show="!isModel">
                     <div class="title">基本</div>
                 </div>
                 <div class="item" v-for="(item,index) in compItems" @click="clickAction(item)">
@@ -22,30 +23,33 @@ import _ from "lodash"
 export default{
     data(){
         return{
-            compItems:[]
+            compItems:[],
+            isModel:false
         }
     },
     mounted(){
         let comps = [
-           {id:1 ,name:"文本"},
-           {id:2 ,name:"按钮"},
-           {id:3 ,name:"图片"}
+           {id:1 ,name:"文本",size:{width:150,height:50}},
+           {id:2 ,name:"按钮",size:{width:80,height:40}},
+           {id:3 ,name:"图片",size:{width:50,height:50}}
         ]
         this.compItems = comps;
     },
     methods:{
         clickAction(it){
-            let width= _.random(10,300);
-            let height = _.random(20,300);
-            let x = _.random(10,200);
+            let x = _.random(100,200);
             let y = _.random(10,200);
+            it.size.x = x;
+            it.size.y = y;
             let config = {
                type : it.id,
-               size : {
-                  width,height,x,y
-               }
+               size : it.size
             }
             this.$store.dispatch("global/addAction",config)
+        },
+        leftToggle(){
+            this.isModel =!this.isModel;
+            this.$store.dispatch('global/setScreenSize',{left :this.isModel ? 50 : 180 })
         }
     },
     components:{
@@ -54,7 +58,7 @@ export default{
 </script>
 <style>
 @component-namespace ylf {
-    @b compArea{
+    @b compArea {
         position: fixed;
         left: 0;
         top: 38px;
@@ -78,7 +82,6 @@ export default{
             bottom: 46px;
             background-color: #f7f7f7;
             padding: 0;
-
             & .items{
                 width: 180px;
 
@@ -141,7 +144,29 @@ export default{
             }
         }
     }
-
 }
+
+.ylf-compArea.model{
+    width:80px;
+}
+
+.ylf-compArea__containers.model .items{
+    width : 50px
+}
+.ylf-compArea__containers.model .item{
+    width: 50px;
+    height: 30px;
+    padding: 8px;
+    margin-bottom: 10px;
+    overflow: hidden;
+    & .component{
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        margin: 0;
+        padding: 0;
+    }
+}
+
 
 </style>

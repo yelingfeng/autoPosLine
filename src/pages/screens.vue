@@ -1,5 +1,5 @@
 <template>
-    <div class="ylf-screens ps-container" style="right: 239px;left: 180px;"  ref="wrapper" >
+    <div class="ylf-screens ps-container" :style="containerObj"  ref="wrapper" >
         <div class="ylf-screens__container" ref="inner">
             <div class="screen" :style="screenObj">
                 <div class="canvas" id="canvas-container">
@@ -8,17 +8,23 @@
                     <div class="vertical_line top"></div>
                     <div class="vertical_line right"></div>
                     <div class="horizon_line left " ></div>
-                    <div class="horizon_line top" style="top:600px;display:block;"></div>
+                    <div class="horizon_line top" style="top:300px;display:block;"></div>
                     <div class="horizon_line right"></div>
                     <elementBox :options="comp" v-for="comp in getComps"></elementBox>
                 </div>
+                <div class="actions">
+                    <div class="resizer_y resizer">
+                        <span class="enlarge"><i class="fa fa-chevron-down"></i></span>
+                        <span class="tip">拖动调节页面高度</span>
+                        <span class="reduce"><i class="fa fa-chevron-up"></i></span>
+                    </div>
+                </div>
             </div>
         </div>
-        <!-- 缩略图
+        <!-- 缩略图-->
         <div class="ylf-screens__minimap" ref="minimap">
             <div class="ylf-screens__minimap--indicator" ></div>
         </div>
-         -->
     </div>
 </template>
 <script>
@@ -38,8 +44,15 @@ export default{
                 height: this.h + "px"
             }
         },
+        containerObj(){
+            return {
+                left : this.getScreenSize.left +"px",
+                right : this.getScreenSize.right + "px"
+            }
+        },
         ...mapGetters({
-            getComps:'global/getComponents'
+            getComps:'global/getComponents',
+            getScreenSize : 'global/getScreenSize'
         })
     },
     mounted(){
@@ -56,15 +69,18 @@ export default{
               disableMouse: true,
               disablePointer: true,
               freeScroll:true,
-              fadeScrollbars: false,
+              fadeScrollbars: true,
               probeType: 3,                  // 探针的活跃度或者频率 3最高
               scrollX: true,                 // 开启横轴滚动
               interactiveScrollbars: true ,  // 滚动条能拖动
-             //  indicators: {
-             //   el:miniMap,
-             //   interactive: true
-             // }
+              indicators: {
+                   el:miniMap,
+                   interactive: true
+              }
         });
+
+
+
     },
     components:{
         elementBox
@@ -80,7 +96,7 @@ export default{
 }
 
 .ps-container{
-  overflow: hidden !important;
+   overflow: hidden !important;
 }
 
 .iScrollHorizontalScrollbar{
@@ -110,22 +126,11 @@ export default{
                 border: 1px solid #bbbbbb;
                 border-radius: 10px;
                 position: absolute;
-                padding: 19px 19px 19px 19px;
+                padding: 19px 19px 39px 19px;
                 left: 30%;
                 top: 58px;
                 transform-origin: center 0;
                 transition: all 0.3s ease-in-out;
-
-                & .canvas{
-                    border: 1px solid #c2c2c3;
-                    width: 100%;
-                    height: 100%;
-                    background:#f0f0f2 repeat top left;
-                    background-size: 100% auto;
-                    overflow: visible;
-                    position: relative;
-                    z-index: -65535;
-                }
 
                 & .sgrid{
                     position: absolute;
@@ -158,7 +163,39 @@ export default{
                     z-index: 9;
                     display: none;
                 }
-
+                & .canvas{
+                    border: 1px solid #c2c2c3;
+                    width: 100%;
+                    height: 100%;
+                    background:#f0f0f2 repeat top left;
+                    background-size: 100% auto;
+                    overflow: visible;
+                    position: relative;
+                    z-index: -65535;
+                }
+                & .actions{
+                    position: absolute;
+                    left: 0;
+                    bottom: 0px;
+                    height: 39px;
+                    width: 100%;
+                    text-align: center;
+                    z-index: -65536;
+                    & .resizer_y{
+                        position: absolute 0 * * 0;
+                        size :100%;
+                        line-height: 36px;
+                        color: #888888;
+                        & .enlarge ,& .reduce{
+                            display: inline-block;
+                            width: 30px;
+                            cursor: pointer;
+                        }
+                        & .tip{
+                            cursor: ns-resize;
+                        }
+                    }
+                }
 
             }
         }
@@ -168,9 +205,11 @@ export default{
             right: 0;
             bottom: 0;
             z-index: 1;
-            width: 250px;
-            height: 100px;
-            border: 2px solid #ccc;
+            width: 100px;
+            height: 50px;
+            border: 1px solid #ccc;
+            border-right:none;
+            border-bottom:none;
             background-color:#fff;
             @m indicator {
                 position: absolute;

@@ -131,7 +131,12 @@ export default class DragClass{
 
   handlerClick(e){
     this.isEditor = true;
-    this.$emit('handlerClick',e);
+    this.$emit('handlerClick',{
+        w: this.w,
+        h: this.h,
+        x : this.left,
+        y : this.top
+    });
     e.stopPropagation();
   }
 

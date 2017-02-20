@@ -1,4 +1,3 @@
-import Vue from "vue"
 import Component from "vue-class-component"
 import DragClass from './drag'
 @Component({
@@ -12,25 +11,21 @@ import DragClass from './drag'
      },
 })
 export default class elementBox {
-
     data(){
       return {
 
       }
     }
-
-    clickHandler(){
-
+    clickHandler(op){
+       // 设置当前选中的尺寸
+       this.$store.dispatch("global/selectorSize",op)
     }
-
     resizeDone(){
 
     }
-
     contextMenuHandler(){
 
     }
-
     render(h){
         let content ;
         if(this.options.type == "1"){
