@@ -8,7 +8,7 @@ const SET_SELECTOR_SIZE = "SET_SELECTOR_SIZE"
 
 const state = {
   comps : [],
-  curSelect:{size:{}},
+  curSelect:{size:{},id:""},
   screenSize:{
     right : 239,
     left : 180
@@ -21,7 +21,8 @@ const mutations = {
     state.comps.push(payload)
   },
   [SET_SELECTOR_SIZE](state,payload){
-    state.curSelect.size = payload;
+    state.curSelect.id = payload.id;
+    state.curSelect.size = payload.size;
   },
   [UPDATE_SCREEN_SIZE](state,payload){
     let _right = payload.right;
@@ -63,6 +64,9 @@ const getters = {
   },
   getCurCompSize(state){
     return state.curSelect.size
+  },
+  getCurSelect(state){
+    return state.curSelect
   }
 }
 

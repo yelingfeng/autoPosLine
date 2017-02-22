@@ -52,7 +52,8 @@ export default class DragClass{
     this.h = int(this.options.size.height);
   }
   mounted(){
-    this.box = $(this.$el)
+    this.box = $(this.$el);
+    this.id = this.options.id;
     this.handlers['dragging'] = this.handlerDrag.bind(this);
     this.handlers['resizing'] = this.handlerResize.bind(this);
     this.handlers['complete'] = this.handlerComplete.bind(this);
@@ -247,7 +248,7 @@ export default class DragClass{
                 }
                </div>
     return (
-      <div class="ylf-element"  onMousedown={this.handlerMouseDown} onClick={this.handlerClick}  onContextmenu={this.handleContextMenu}
+      <div class="ylf-element" id={this.options.id} onMousedown={this.handlerMouseDown} onClick={this.handlerClick}  onContextmenu={this.handleContextMenu}
            style={this.boxStyle}>
            {this.$slots.default}
            {rbMap}

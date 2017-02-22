@@ -18,7 +18,10 @@ export default class elementBox {
     }
     clickHandler(op){
        // 设置当前选中的尺寸
-       this.$store.dispatch("global/selectorSize",op)
+       this.$store.dispatch("global/selectorSize",{
+         id :this.$refs.box.id,
+         size :op
+       })
     }
     resizeDone(){
 

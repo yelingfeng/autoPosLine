@@ -1,15 +1,10 @@
 <template>
     <div class="ylf-screens ps-container" :style="containerObj"  ref="wrapper" >
-        <div class="ylf-screens__container" ref="inner">
+        <div class="ylf-screens__container" ref="inner" id="screen-container">
             <div class="screen" :style="screenObj">
                 <div class="canvas" id="canvas-container">
                     <div class="sgrid"></div>
-                    <div class="vertical_line left" style="left:100px;display:block;"></div>
-                    <div class="vertical_line top"></div>
-                    <div class="vertical_line right"></div>
-                    <div class="horizon_line left " ></div>
-                    <div class="horizon_line top" style="top:300px;display:block;"></div>
-                    <div class="horizon_line right"></div>
+                    <lineContainer ref="lineBox" :w="w" :h="h"></lineContainer>
                     <elementBox :options="comp" v-for="comp in getComps"></elementBox>
                 </div>
                 <div class="actions">
@@ -29,6 +24,7 @@
 </template>
 <script>
 import elementBox from "components/element.js"
+import lineContainer from "components/autoPosLine.vue"
 import { mapGetters } from "vuex"
 export default{
     data(){
@@ -79,11 +75,13 @@ export default{
               }
         });
 
-
-
+        this.$nextTick(()=>{
+            this.$refs.lineBox.viewInit()
+        })
     },
     components:{
-        elementBox
+        elementBox,
+        lineContainer
     }
 }
 </script>
@@ -142,27 +140,6 @@ export default{
                     pointer-events: none
                 }
 
-                & .vertical_line {
-                    height: 100%;
-                    position: absolute;
-                    top: 0;
-                    left: 100px;
-                    width: 1px;
-                    border-left: 1px dashed #fe9d60;
-                    z-index: 9;
-                    display: none;
-                }
-
-                & .horizon_line {
-                    width: 110%;
-                    position: absolute;
-                    top: 100px;
-                    left: -5%;
-                    height: 1px;
-                    border-top: 1px dashed #fe9d60;
-                    z-index: 9;
-                    display: none;
-                }
                 & .canvas{
                     border: 1px solid #c2c2c3;
                     width: 100%;

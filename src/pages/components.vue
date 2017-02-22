@@ -29,20 +29,28 @@ export default{
     },
     mounted(){
         let comps = [
-           {id:1 ,name:"文本",size:{width:150,height:50}},
-           {id:2 ,name:"按钮",size:{width:80,height:40}},
-           {id:3 ,name:"图片",size:{width:50,height:50}}
+           {type:1 ,name:"文本",size:{width:150,height:50}},
+           {type:2 ,name:"按钮",size:{width:80,height:40}},
+           {type:3 ,name:"图片",size:{width:50,height:50}}
         ]
         this.compItems = comps;
     },
     methods:{
+
+        createUUID(){
+            function S4() {
+               return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
+            }
+            return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
+        },
         clickAction(it){
             let x = _.random(100,200);
             let y = _.random(10,200);
             it.size.x = x;
             it.size.y = y;
             let config = {
-               type : it.id,
+               id : this.createUUID(),
+               type : it.type,
                size : it.size
             }
             this.$store.dispatch("global/addAction",config)

@@ -7,7 +7,7 @@ var config = {
     app: './src/app.js',
     vendor: ['vue', 'vuex']
   },
-  dist: './dist/static',
+  dist: './dist',
   externals: {
     'jquery': 'jQuery'
   },
@@ -22,10 +22,9 @@ var config = {
   hash: true,
   sourceMap: false,
   static:true,
-  publicPath: '/static/',
   assetsPath: 'images',
   urlLoaderLimit: 10000,
-  extractCSS: 'css/[name].[contenthash:7].css',
+  extractCSS: 'css/[name].[hash:8].css',
   extends: ['vue2','saladcss'],
   postcss: [
     require('postcss-salad')({
@@ -48,7 +47,7 @@ var config = {
 }
 if (process.env.NODE_ENV === 'production') {
   config.template = [{
-    filename: '../index.html',
+    filename: 'index.html',
     template: 'src/template/index.html',
     chunks: ['manifest', 'vendor', 'app']
   }]
@@ -79,8 +78,7 @@ cooking.add('plugin.ProvidePlugin',
   }))
 
 if (process.env.NODE_ENV === 'production') {
-  cooking.add('output.filename', 'js/[name].[chunkhash:7].js')
-  cooking.add('output.chunkFilename', 'js/[id].[chunkhash:7].js')
+  cooking.add('output.filename', 'js/[name].[hash:8].js')
   cooking.add('plugin.CommonsChunk1', new webpack.optimize.CommonsChunkPlugin({
     name: 'vendor',
     minChunks: function(module, count) {
@@ -88,9 +86,7 @@ if (process.env.NODE_ENV === 'production') {
     }
   }))
   cooking.add('plugin.CommonsChunk2', new webpack.optimize.CommonsChunkPlugin({
-    name: 'manifest',
-    chunks: ['vendor']
-  }))
+    name: 'manifest', chunks: ['vendor']}))
 } else {
   cooking.add('plugin.CommonsChunk', new webpack.optimize.CommonsChunkPlugin({
     names: ["vendor"]
