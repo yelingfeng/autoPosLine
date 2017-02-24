@@ -2,7 +2,7 @@
     <div class="ylf-toolbar" id="toolbar">
         <div class="ylf-toolbar__container">
              <div class="ylf-toolbar__left">
-                 <a class="name">yelingfeng</a>
+                 <a class="name" href="javascript:;" >yelingfeng</a>
                  <a class="avatar" href="https://github.com/yelingfeng" target="_blank">
                      <img src="../assets/images/ylf.png" height="20" width="20" />
                  </a>
@@ -19,12 +19,15 @@
 </template>
 
 <script>
+
 export default{
     data(){
         return{
             iconArr : ['weibo','github','weixin','qq','windows','mac']
         }
     },
+    methods:{
+    }
 }
 </script>
 <style>

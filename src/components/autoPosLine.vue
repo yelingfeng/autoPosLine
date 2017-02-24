@@ -1,11 +1,11 @@
 <template>
     <div class="line-container">
-        <div class="vertical_line left"  :style="posStyle('left')"></div>
-        <div class="vertical_line top" :style="posStyle('xCenter')"></div>
-        <div class="vertical_line right" :style="posStyle('right')"></div>
-        <div class="horizon_line left" :style="posStyle('top')"></div>
-        <div class="horizon_line top" :style="posStyle('yCenter')"></div>
-        <div class="horizon_line right" :style="posStyle('bottom')"></div>
+        <div class="vertical_line left" :style="cleft"></div>
+        <div class="vertical_line top" :style="cxCenter" ></div>
+        <div class="vertical_line right" :style="cright" ></div>
+        <div class="horizon_line left"  :style="ctop" ></div>
+        <div class="horizon_line top" :style="cyCenter" ></div>
+        <div class="horizon_line right"  :style="cbottom" ></div>
     </div>
 </template>
 <script>
@@ -19,6 +19,12 @@ export default{
              left :[],
              top :[]
            },
+           cleft:{left:0,display:'none'},
+           cxCenter:{left:0,display:'none'},
+           cright:{left:0,display:'none'},
+           ctop:{top:0,display:'none'},
+           cyCenter:{top:0,display:'none'},
+           cbottom:{top:0,display:'none'},
            curStyle :{},
            elementPos : {
               left : [],
@@ -27,39 +33,52 @@ export default{
         }
     },
     computed:{
-         compSize:{
+        ...mapGetters({
+            moveObj:'global/getMovingObj',
+            elements : 'global/getComponents',
+            selectedElement : 'global/getCurSelect'
+        })
+    },
+    watch:{
+         selectedElement:{
             deep:true,
-            handler(newVal,ov){
-                if(newVal){
-                    let style = {};
-                    let width = newVal.x;
-                    let height = newVal.y;
-                    let left = newVal.x;
-                    let top = newVal.y;
-                    style.right = left + width;
-                    style.xCenter = left + parseInt(width / 2);
-                    style.bottom = top + height;
-                    style.yCenter = top + parseInt(height / 2);
-                    style.width = width ;
-                    style.height = height;
-                    style.left = left;
-                    style.top = top;
-                    this.curStyle = style;
+            handler(newVal,oldVal){
+                if(newVal ){
+                    let size = newVal.size
+                    let style = {
+                        width : size.width,
+                        height : size.height,
+                        left :size.x,
+                        top : size.y,
+                        right : size.x + size.width,
+                        xCenter : size.x + parseInt(size.width / 2,10),
+                        bottom : size.y + size.height,
+                        yCenter : size.y + parseInt(size.height/2,10)
+                    };
+                   this.curStyle = style;
+                }
+            }
+         },
+
+        'moveObj.left':{
+            deep:true,
+            handler(left){
+                if(left){
+                    this.curStyle.left = left;
+                    this.posStyle('left')
+                    this.posStyle('xCenter')
+                    this.posStyle('right')
                 }
             }
         },
-        ...mapGetters({
-            compSize:'global/getCurCompSize',
-            elements : 'global/getComponents',
-            selectedElement : 'global/getCurSelect'
-        }),
-    },
-    watch:{
-        selectedElement:{
+        'moveObj.top':{
             deep:true,
-            handler(el){
-                if(el && el.id){
-                    //this.setElementsPos()
+            handler(top){
+                if(top){
+                    this.curStyle.top = top;
+                    this.posStyle('top')
+                    this.posStyle('yCenter')
+                    this.posStyle('bottom')
                 }
             }
         }
@@ -85,8 +104,7 @@ export default{
                   break;
                 }
             }
-
-            if (pos == 'yCenter' && window.moveObj) {
+            if (pos == 'yCenter' && this.movingObj) {
                 let moveObj = {};
                 for (var key in attractOffsets) {
                   if (!lockX && attractOffsets[key] != undefined && ['left', 'right', 'xCenter'].indexOf(key) > -1) {
@@ -100,12 +118,14 @@ export default{
                 }
                 window.moveObj = moveObj;
              }
-
+	        let targetAttr = 'c'+pos;
 	        let style = {
-	          display: samePos ? 'block' : 'none'
+	            display: samePos ? 'block' : 'none'
 	        }
-	        style[relativePos] = targetPos
-	        return style
+	        if(samePos){
+	           style[relativePos] = targetPos+ "px"
+	        }
+            this[targetAttr] = style;
         },
         viewInit(){
           let top = 0 ;

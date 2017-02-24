@@ -1,10 +1,12 @@
-
+import Vue from "vue"
 // 添加组件
 const ADD_COMPONENTS = 'ADD_COMPONENTS'
 // 更新容器尺寸
 const UPDATE_SCREEN_SIZE = "UPDATE_SCREEN_SIZE"
 // 设置当前组件尺寸
 const SET_SELECTOR_SIZE = "SET_SELECTOR_SIZE"
+// 设置移动中的尺寸对象
+const SET_MOVING_POS = "SET_MOVING_POS"
 
 const state = {
   comps : [],
@@ -12,6 +14,9 @@ const state = {
   screenSize:{
     right : 239,
     left : 180
+  },
+  moveObj:{
+
   }
 }
 
@@ -23,6 +28,9 @@ const mutations = {
   [SET_SELECTOR_SIZE](state,payload){
     state.curSelect.id = payload.id;
     state.curSelect.size = payload.size;
+  },
+  [SET_MOVING_POS](state,payload){
+    Vue.set(state, 'moveObj', payload.moveObj)
   },
   [UPDATE_SCREEN_SIZE](state,payload){
     let _right = payload.right;
@@ -52,6 +60,11 @@ const actions = {
   // 设置当前选中尺寸
   selectorSize({commit} , payload){
     commit(SET_SELECTOR_SIZE,payload);
+  },
+
+  // 设置移动状态到全局
+  setMovingPos({commit} ,payload){
+    commit(SET_MOVING_POS,payload);
   }
 }
 
@@ -67,6 +80,9 @@ const getters = {
   },
   getCurSelect(state){
     return state.curSelect
+  },
+  getMovingObj(state){
+    return state.moveObj
   }
 }
 

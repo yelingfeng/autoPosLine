@@ -23,6 +23,15 @@ export default class elementBox {
          size :op
        })
     }
+
+    // 移动组件中
+    movingElement(op){
+      this.$store.dispatch("global/setMovingPos",{
+        id :this.$refs.box.id,
+        moveObj :op
+      })
+    }
+
     resizeDone(){
 
     }
@@ -39,7 +48,7 @@ export default class elementBox {
           content = <img class="ylf" width="40" height="40"></img>
         }
         return(
-            <DragClass ref="box" options={this.options}
+            <DragClass ref="box" options={this.options} onMoveElement={this.movingElement}
                  onHandlerClick={this.clickHandler}
                  onHandlerResize={this.resizeDone}
                  onHandlerRight={this.contextMenuHandler}>

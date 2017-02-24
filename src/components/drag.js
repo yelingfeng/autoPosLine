@@ -79,7 +79,6 @@ export default class DragClass{
   }
 
   handlerMouseDown(e){
-    if(this.isView)return ;
     this._start(e,'dragging');
     // 鼠标按下时候的位置
     this.oPos = { x: e.pageX||0 ,y:e.pageY || 0}
@@ -88,11 +87,20 @@ export default class DragClass{
     // e.preventDefault();
   }
 
+
   handlerDrag(e){
     this.boxOffset.left = this._boundx(this.boxOffset.left + e.pageX - this.oPos.x, -this.w);
     this.boxOffset.top = this._boundy(this.boxOffset.top + e.pageY - this.oPos.y ,-this.h);
     this.oPos = {x: e.pageX , y:e.pageY}
     this.adjustBox(this.boxOffset.left - this.parentOffset.left , this.boxOffset.top - this.parentOffset.top)
+
+    let  moveObj = {
+      startX: e.pageX,
+      startY: e.pageY,
+      left: this.boxOffset.left,
+      top: this.boxOffset.top
+    };
+    this.$emit('moveElement',moveObj)
   }
 
   handlerResize(e){
@@ -248,7 +256,8 @@ export default class DragClass{
                 }
                </div>
     return (
-      <div class="ylf-element" id={this.options.id} onMousedown={this.handlerMouseDown} onClick={this.handlerClick}  onContextmenu={this.handleContextMenu}
+      <div class="ylf-element" id={this.options.id}
+           onMousedown={this.handlerMouseDown} onClick={this.handlerClick}  onContextmenu={this.handleContextMenu}
            style={this.boxStyle}>
            {this.$slots.default}
            {rbMap}
