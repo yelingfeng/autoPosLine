@@ -7,6 +7,8 @@ const UPDATE_SCREEN_SIZE = "UPDATE_SCREEN_SIZE"
 const SET_SELECTOR_SIZE = "SET_SELECTOR_SIZE"
 // 设置移动中的尺寸对象
 const SET_MOVING_POS = "SET_MOVING_POS"
+// 设置所有元素信息对象
+const SET_ALLELEMENTS_OPTION = "SET_ALLELEMENT_OPTION"
 
 const state = {
   comps : [],
@@ -17,6 +19,9 @@ const state = {
   },
   moveObj:{
 
+  },
+  allElementsOption:{
+
   }
 }
 
@@ -24,6 +29,10 @@ const state = {
 const mutations = {
   [ADD_COMPONENTS](state,payload){
     state.comps.push(payload)
+  },
+  [SET_ALLELEMENTS_OPTION](state,payload){
+    state.allElementsOption["selectId"] = payload.id
+    Vue.set(state.allElementsOption,payload.id,payload["elementOption"])
   },
   [SET_SELECTOR_SIZE](state,payload){
     state.curSelect.id = payload.id;
@@ -65,7 +74,14 @@ const actions = {
   // 设置移动状态到全局
   setMovingPos({commit} ,payload){
     commit(SET_MOVING_POS,payload);
+  },
+
+  // 设置当前拥有盒子的属性
+  setAllElementsOption({commit} ,payload){
+    commit(SET_ALLELEMENTS_OPTION,payload);
   }
+
+
 }
 
 const getters = {
@@ -83,6 +99,9 @@ const getters = {
   },
   getMovingObj(state){
     return state.moveObj
+  },
+  getAllElementsOption(state){
+    return state.allElementsOption
   }
 }
 

@@ -197,6 +197,14 @@ export default class DragClass{
     this.top = int(top);
     this.w = int(width) ;
     this.h = int(height) ;
+    let _this = this
+    let op = {
+      x : _this.left,
+      y : _this.top,
+      width : _this.w,
+      height : _this.h
+    }
+    _this.$emit('moveContinued',op)
   }
 
   _boundx(x = 0,extra = 0){
@@ -240,7 +248,7 @@ export default class DragClass{
     obj.bottom =( layoutBox.outerHeight(true) + this.parentOffset.top ) - this.h - boxoffset.top;
     obj.w = this.w;
     obj.h = this.h;
-    return obj;
+     return obj;
   }
 
 

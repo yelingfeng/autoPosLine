@@ -75,9 +75,6 @@ export default{
               }
         });
 
-        this.$nextTick(()=>{
-            this.$refs.lineBox.viewInit()
-        })
     },
     components:{
         elementBox,

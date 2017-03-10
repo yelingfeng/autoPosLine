@@ -1,172 +1,113 @@
 <template>
     <div class="line-container">
-        <div class="vertical_line left" :style="cleft"></div>
-        <div class="vertical_line top" :style="cxCenter" ></div>
-        <div class="vertical_line right" :style="cright" ></div>
-        <div class="horizon_line left"  :style="ctop" ></div>
-        <div class="horizon_line top" :style="cyCenter" ></div>
-        <div class="horizon_line right"  :style="cbottom" ></div>
+        <div v-for="item in leftStyle" class="vertical_line" :style="item"></div>
+        <div v-for="item in topStyle" class="horizon_line"  :style="item" ></div>
     </div>
 </template>
 <script>
 import { mapGetters } from "vuex"
-let attractOffsets = {};
+import _ from "lodash"
 export default{
     props:['w','h'],
     data(){
         return {
-           viewMod:{
-             left :[],
-             top :[]
-           },
-           cleft:{left:0,display:'none'},
-           cxCenter:{left:0,display:'none'},
-           cright:{left:0,display:'none'},
-           ctop:{top:0,display:'none'},
-           cyCenter:{top:0,display:'none'},
-           cbottom:{top:0,display:'none'},
-           curStyle :{},
            elementPos : {
-              left : [],
-              top : []
-           }
+              left : [this.w*1/2],
+              top : [this.h*1/2]
+           },
+           leftStyle:[],
+           topStyle:[],
+           selectId:""
         }
     },
     computed:{
         ...mapGetters({
-            moveObj:'global/getMovingObj',
-            elements : 'global/getComponents',
-            selectedElement : 'global/getCurSelect'
+            allElementsOption:'global/getAllElementsOption',
+            getCurSelect:"global/getCurSelect"
         })
     },
     watch:{
-         selectedElement:{
+        allElementsOption : {
             deep:true,
-            handler(newVal,oldVal){
-                if(newVal ){
-                    let size = newVal.size
-                    let style = {
-                        width : size.width,
-                        height : size.height,
-                        left :size.x,
-                        top : size.y,
-                        right : size.x + size.width,
-                        xCenter : size.x + parseInt(size.width / 2,10),
-                        bottom : size.y + size.height,
-                        yCenter : size.y + parseInt(size.height/2,10)
-                    };
-                   this.curStyle = style;
-                }
-            }
-         },
-
-        'moveObj.left':{
-            deep:true,
-            handler(left){
-                if(left){
-                    this.curStyle.left = left;
-                    this.posStyle('left')
-                    this.posStyle('xCenter')
-                    this.posStyle('right')
-                }
+            handler(e){
+                this.setSelectId(e)
+                this.countElementPos(e)
             }
         },
-        'moveObj.top':{
+        leftStyle : {
             deep:true,
-            handler(top){
-                if(top){
-                    this.curStyle.top = top;
-                    this.posStyle('top')
-                    this.posStyle('yCenter')
-                    this.posStyle('bottom')
-                }
+            handler(e){
             }
         }
     },
     methods:{
-        posStyle(pos){
-            let relativePos = /left|right|xCenter/.test(pos) ? 'left' : 'top';
-            let allPos = this.elementPos[relativePos].concat(this['viewMod'][relativePos]);
-            let attractOffset = 5;
-            let elePos = this.curStyle[pos];
-            let samePos = false;
-            let targetPos;
-	        let targetOffset ;
-	        let lockX = false;
-	        let lockY = false;
-            attractOffsets[pos] = undefined;
-            for (let i = 0,allNum = allPos.length; i < allNum; i += 1) {
-                targetPos = allPos[i];
-                if (elePos <= attractOffset + targetPos && elePos >= targetPos - attractOffset) {
-                  targetOffset = targetPos - elePos;
-                  samePos = true;
-                  attractOffsets[pos] = targetOffset;
-                  break;
+        setSelectId(e){
+          this.selectId = e.selectId
+        },
+        countElementPos(e){
+            //每次计算的时候都需要将以前数据清除
+            this.clearElementPos()
+            //对对象进行循环
+            for(let key in e){
+                if(  key != "selectId"){
+                    let x = parseInt(e[key].x)
+                    let y = parseInt(e[key].y)
+                    let h = parseInt(e[key].height)
+                    let w = parseInt(e[key].width)
+                    let tTop = y
+                    let tCenter = y + 1/2 * h
+                    let tBottom = y + h
+                    let lLeft = x
+                    let lMiddle = x + 1/2 * w
+                    let lRight = x + w
+                    this.elementPos.left = this.elementPos.left.concat([lLeft,lMiddle,lRight])
+                    this.elementPos.top = this.elementPos.top.concat([tTop,tCenter,tBottom])
                 }
             }
-            if (pos == 'yCenter' && this.movingObj) {
-                let moveObj = {};
-                for (var key in attractOffsets) {
-                  if (!lockX && attractOffsets[key] != undefined && ['left', 'right', 'xCenter'].indexOf(key) > -1) {
-                    moveObj.left = parseInt(attractOffsets[key]);
-                    lockX = true;
-                  }
-                  if (!lockY && attractOffsets[key] != undefined && ['top', 'bottom', 'yCenter'].indexOf(key) > -1) {
-                    moveObj.top = parseInt(attractOffsets[key]);
-                    lockY = true;
-                  }
-                }
-                window.moveObj = moveObj;
-             }
-	        let targetAttr = 'c'+pos;
-	        let style = {
-	            display: samePos ? 'block' : 'none'
-	        }
-	        if(samePos){
-	           style[relativePos] = targetPos+ "px"
-	        }
-            this[targetAttr] = style;
+            this.checkCoincidence()
         },
-        viewInit(){
-          let top = 0 ;
-          let bottom = 0;
-          top = $("#canvas-container").offset()['top'];
-          bottom = top + this.h;
-          this.viewMod.left = [0, (0 + this.w) / 2, this.w];
-          this.viewMod.top = [top , (top + bottom)  / 2, bottom ]
-          this.setElementsPos()
-        },
-        setElementsPos(){
-          let elements = this.elements,
-	          el,
-	          elementStyle,
-	          selectId = this.selectedElement.id,
-	          num = elements.length,
-	          viewBoxBottom = this.viewMod ? this.viewMod['top'][2] : this.h,
-	          viewBoxTop = this.viewMod ? this.viewMod['top'][0] : 0,
-	          pos = {
-                left: [],
-                top: []
-              },
-	          left ,
-	          top ,
-	          width ,
-	          height ;
-
-	       for(let i= 0 ;i<num ;i++){
-	            el = elements[i];
-                if (el.id == selectId) {
-                  continue;
-                }
-                left = el.size['x'];
-                top = el.size['y'];
-                width = el.size['width'];
-                height = el.size['height'];
-                pos['left'].push(left, left + parseInt(width / 2), left + width);
-	            pos['top'].push(top, parseInt(top + height / 2), top + height);
+        clearElementPos(){
+            this.elementPos = {
+                left : [this.w*1/2],
+                top : [this.h*1/2]
             }
-            this.$set(this.elementPos, 'left',pos['left']);
-            this.$set(this.elementPos, 'top',pos['top']);
+            this.leftStyle = []
+            this.topStyle = []
+        },
+        checkCoincidence(){
+            let _this = this
+            //检测是否有重复值
+            let repeatObj = {
+                lRepeat : this.judgeArrRepeat(this.elementPos.left),
+                tRepeat : this.judgeArrRepeat(this.elementPos.top)
+            }
+            for(let key in repeatObj){
+                if(repeatObj[key] instanceof Array && repeatObj[key].length >0 ){
+                    repeatObj[key].forEach(function (e) {
+                        if(key == "lRepeat"){
+                            _this.leftStyle.push({
+                                left : e + "px",
+                                display : "block"
+                            })
+                        }else if(key == "tRepeat"){
+                            _this.topStyle.push({
+                                top : e + "px",
+                                display : "block"
+                            })
+                        }
+                    })
+                }
+            }
+        },
+        judgeArrRepeat(arr){
+            let s = arr.join(",")+",";
+            let resultArr = []
+            for(let i=0;i<arr.length;i++) {
+                if(s.replace(arr[i]+",","").indexOf(arr[i]+",")>-1) {
+                    resultArr.push(arr[i])
+                }
+            }
+            return _.uniq(resultArr)
         }
     }
 }

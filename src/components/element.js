@@ -1,5 +1,6 @@
 import Component from "vue-class-component"
 import DragClass from './drag'
+
 @Component({
      props:{
         options:{
@@ -8,7 +9,7 @@ import DragClass from './drag'
                 return {}
             }
         }
-     },
+     }
 })
 export default class elementBox {
     data(){
@@ -22,6 +23,7 @@ export default class elementBox {
          id :this.$refs.box.id,
          size :op
        })
+
     }
 
     // 移动组件中
@@ -30,6 +32,13 @@ export default class elementBox {
         id :this.$refs.box.id,
         moveObj :op
       })
+    }
+
+    changeElement(op){
+        this.$store.dispatch("global/setAllElementsOption",{
+            id : this.$refs.box.id,
+            elementOption : op
+        })
     }
 
     resizeDone(){
@@ -47,11 +56,16 @@ export default class elementBox {
         }else if(this.options.type == "3"){
           content = <img class="ylf" width="40" height="40"></img>
         }
+        this.$store.dispatch("global/setAllElementsOption",{
+            id :this.options.id,
+            elementOption :this.options.size
+        })
         return(
             <DragClass ref="box" options={this.options} onMoveElement={this.movingElement}
                  onHandlerClick={this.clickHandler}
                  onHandlerResize={this.resizeDone}
-                 onHandlerRight={this.contextMenuHandler}>
+                 onHandlerRight={this.contextMenuHandler}
+                 onMoveContinued={this.changeElement}>
               {content}
              </DragClass>
         )
